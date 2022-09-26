@@ -77,17 +77,17 @@ public class ElasticBookService extends AbstractElasticService<ElasticBook> {
 
     public final PageVO<ElasticBook> search(ElasticBookSearchReq req) {
 
-        BaseSearch handler = searchFactory.getHandler(SearchConstant.BOOK_SEARCH_HANDLER);
+        BaseSearch handler = searchFactory.getHandler(SearchConstant.SearchHandler.BOOK_SEARCH_HANDLER);
         return handler.page(ElasticBook.class, req);
     }
 
     @Override
     protected String _index() {
-        return SearchConstant.BOOK_INDEX;
+        return SearchConstant.BookIndex._INDEX;
     }
 
     @Override
     protected String _idField() {
-        return SearchConstant.BOOK_ID_FIELD;
+        return SearchConstant.BookIndex._ID_FIELD;
     }
 }

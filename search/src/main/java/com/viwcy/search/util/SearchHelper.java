@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.viwcy.basecommon.exception.BaseException;
 import com.viwcy.search.constant.SearchConstant;
+import com.viwcy.search.entity.ElasticBook;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -26,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * TODO  Copyright (c) yun lu 2021 Fau (viwcy4611@gmail.com), ltd
@@ -33,6 +37,32 @@ import java.util.Objects;
 @Slf4j
 @Component
 public class SearchHelper {
+
+    public static void main(String[] args) {
+
+        List<ElasticBook> list = new ArrayList<ElasticBook>(3) {{
+            add(new ElasticBook(1L, "zhangsan", "《哦哦》"));
+            add(new ElasticBook(1L, "zhangsan1", "《哦哦》1"));
+            add(new ElasticBook(1L, "zhangsan", "《哦哦》2"));
+        }};
+        List<ElasticBook> zhangsan = list.stream().filter(x -> x.getAuthor().equals("zhangsan")).collect(Collectors.toList());
+        System.out.println(zhangsan);
+
+        Map<Long, ElasticBook> map = list.stream().collect(Collectors.toMap(ElasticBook::getId, Function.identity(), (k1, k2) -> k2));
+        System.out.println(map);
+
+        Map<Long, Long> collect = list.stream().collect(Collectors.groupingBy(ElasticBook::getId, Collectors.counting()));
+        System.out.println(collect);
+
+        Map<Long, List<ElasticBook>> collect1 = list.stream().collect(Collectors.groupingBy(ElasticBook::getId, Collectors.toList()));
+        System.out.println(collect1);
+
+        Map<String, List<ElasticBook>> collect2 = list.stream().collect(Collectors.groupingBy(x -> x.getId() + "-" + x.getAuthor(), Collectors.toList()));
+        System.out.println(collect2);
+
+        Long reduce = Stream.of(list.stream().map(ElasticBook::getId).collect(Collectors.toList()).toArray(new Long[]{})).reduce(0L, Long::sum);
+        System.out.println(reduce);
+    }
 
     @Resource
     private RestHighLevelClient restHighLevelClient;

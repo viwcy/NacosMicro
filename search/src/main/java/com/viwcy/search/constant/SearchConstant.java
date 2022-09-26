@@ -14,25 +14,34 @@ public class SearchConstant {
     /**
      * handler
      */
-    public static final String USER_SEARCH_HANDLER = "userSearchHandle";
-    public static final String ARTICLE_SEARCH_HANDLER = "articleSearchHandle";
-    public static final String BOOK_SEARCH_HANDLER = "bookSearchHandle";
+    public final class SearchHandler {
+        public static final String USER_SEARCH_HANDLER = "userSearchHandle";
+        public static final String ARTICLE_SEARCH_HANDLER = "articleSearchHandle";
+        public static final String BOOK_SEARCH_HANDLER = "bookSearchHandle";
+    }
 
     /**
      * index user
      */
-    public static final String USER_INDEX = "user";
-    public static final String USER_ID_FIELD = "id";
+    public final class UserIndex {
+        public static final String _INDEX = "user";
+        public static final String _ID_FIELD = "id";
+    }
+
 
     /**
-     * article user
+     * index article
      */
-    public static final String ARTICLE_INDEX = "article";
-    public static final String ARTICLE_ID_FIELD = "id";
+    public final class ArticleIndex {
+        public static final String _INDEX = "article";
+        public static final String _ID_FIELD = "id";
+    }
 
     /**
      * index book
      */
-    public static final String BOOK_INDEX = "book";
-    public static final String BOOK_ID_FIELD = "id";
+    public final class BookIndex {
+        public static final String _INDEX = "book";
+        public static final String _ID_FIELD = "id";
+    }
 }

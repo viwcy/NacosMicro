@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = SearchConstant.ARTICLE_INDEX)
+@Document(indexName = SearchConstant.ArticleIndex._INDEX)
 @Setting(settingPath = "article/article_setting.json")
 @Mapping(mappingPath = "article/article_mapping.json")
 public class ElasticArticle extends AbstractBaseElasticBean<ElasticArticle> implements Serializable {

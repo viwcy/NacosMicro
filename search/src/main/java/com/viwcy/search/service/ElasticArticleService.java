@@ -59,17 +59,17 @@ public class ElasticArticleService extends AbstractElasticService<ElasticArticle
 
     public final List<ElasticArticle> list(ElasticArticleSearchReq req) {
 
-        BaseSearch handler = searchFactory.getHandler(SearchConstant.ARTICLE_SEARCH_HANDLER);
+        BaseSearch handler = searchFactory.getHandler(SearchConstant.SearchHandler.ARTICLE_SEARCH_HANDLER);
         return handler.list(ElasticArticle.class, req);
     }
 
     @Override
     protected String _index() {
-        return SearchConstant.ARTICLE_INDEX;
+        return SearchConstant.ArticleIndex._INDEX;
     }
 
     @Override
     protected String _idField() {
-        return SearchConstant.ARTICLE_ID_FIELD;
+        return SearchConstant.ArticleIndex._ID_FIELD;
     }
 }

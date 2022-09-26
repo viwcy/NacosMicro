@@ -15,7 +15,7 @@ import java.util.Collection;
 /**
  * TODO  Copyright (c) yun lu 2022 Fau (viwcy4611@gmail.com), ltd
  */
-@Service(SearchConstant.BOOK_SEARCH_HANDLER)
+@Service(SearchConstant.SearchHandler.BOOK_SEARCH_HANDLER)
 public class BookSearchHandle extends AbstractBaseSearch {
 
     @Override

@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * TODO  Copyright (c) yun lu 2022 Fau (viwcy4611@gmail.com), ltd
  */
-@Service(SearchConstant.ARTICLE_SEARCH_HANDLER)
+@Service(SearchConstant.SearchHandler.ARTICLE_SEARCH_HANDLER)
 public class ArticleSearchHandle extends AbstractBaseSearch {
 
     @Override

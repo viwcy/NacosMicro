@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
  * TODO  Copyright (c) yun lu 2022 Fau (viwcy4611@gmail.com), ltd
  */
-@Service(SearchConstant.USER_SEARCH_HANDLER)
+@Service(SearchConstant.SearchHandler.USER_SEARCH_HANDLER)
 public class UserSearchHandle extends AbstractBaseSearch {
 
     @Override
