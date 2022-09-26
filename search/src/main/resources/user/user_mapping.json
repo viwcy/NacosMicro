@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "id": {
+      "type": "long"
+    },
+    "userName": {
+      "analyzer": "char_analyzer",
+      "type": "text"
+    },
+    "phone": {
+      "analyzer": "char_analyzer",
+      "type": "text"
+    },
+    "email": {
+      "analyzer": "char_analyzer",
+      "type": "text"
+    },
+    "createTime": {
+      "type": "long"
+    },
+    "updateTime": {
+      "type": "long"
+    }
+  }
+}

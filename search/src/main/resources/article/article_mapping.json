@@ -1,0 +1,21 @@
+{
+  "properties": {
+    "id": {
+      "type": "long"
+    },
+    "author": {
+      "analyzer": "char_analyzer",
+      "type": "text"
+    },
+    "content": {
+      "analyzer": "char_analyzer",
+      "type": "text"
+    },
+    "createTime": {
+      "type": "long"
+    },
+    "updateTime": {
+      "type": "long"
+    }
+  }
+}

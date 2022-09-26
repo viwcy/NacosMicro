@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/mall/pom.xml" />
+        <option value="$PROJECT_DIR$/base-model/pom.xml" />
+        <option value="$PROJECT_DIR$/canal-server/pom.xml" />
+        <option value="$PROJECT_DIR$/elasticsearch-analysis-ik-7.12.1/pom.xml" />
+        <option value="$PROJECT_DIR$/gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/custom/pom.xml" />
+        <option value="$PROJECT_DIR$/elasticsearch-analysis-ik/pom.xml" />
+        <option value="$PROJECT_DIR$/search/pom.xml" />
+      </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/passing-jwt/pom.xml" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

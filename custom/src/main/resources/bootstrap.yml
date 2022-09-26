@@ -1,0 +1,38 @@
+server:
+  port: 9001
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  profiles:
+    active: dev
+  application:
+    name: custom
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+jwt:
+  config:
+    header: Authorization
+    header-type: JWT
+    expire: 30
+    prefix: Bearer
+    secret: viwcy4611
+    refresh-secret: viwcy4611@gmail.com
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  global-config:
+    db-type: MYSQL
+  configuration:
+    # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    #懒加载
+    aggressive-lazy-loading: true
+    #如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
+    call-setters-on-nulls: true
+logging:
+  level:
+    com.viwcy.custom.mapper: debug

@@ -1,0 +1,71 @@
+server:
+  port: 9002
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  profiles:
+    active: dev
+  application:
+    name: mall
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+logging:
+  level:
+    #开启feign日志，控制打印级别级别
+    com.viwcy.mall.feign.CustomHandle: debug
+
+snowflake:
+  config:
+    worker-id: 0
+    data-center-id: 0
+
+feign:
+  httpclient:
+    enabled: false
+  hystrix:
+    enabled: true
+  okhttp:
+    enabled: true
+#【重点】都是hystrix和ribbon组合配置，timeoutInMilliseconds和ReadTimeout，以小值为熔断标准。
+hystrix:
+  threadpool:
+    default:
+      coreSize: 100
+      maxQueueSize: 2000
+      queueSizeRejectionThreshold: 1500
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          strategy: THREAD
+          semaphore:
+            maxConcurrentRequests: 1000
+          thread:
+            timeoutInMilliseconds: 3000
+    CustomHandle#page(UserPageDTO):
+      execution:
+        timeout:
+          enabled: true # 开启服务熔断，重点，一定要加该配置，否则Feign的熔断不生效
+        isolation:
+          thread:
+            timeoutInMilliseconds: 4000
+# 全局负载均衡
+ribbon:
+  OkToRetryOnAllOperations: false #对所有操作请求都进行重试,默认false
+  ReadTimeout: 3000   #负载均衡超时时间，默认值5000（服务链接成功，长时间读取阻塞，会出现java.net.SocketTimeoutException: timeout，进行服务熔断）
+  ConnectTimeout: 500 #ribbon请求连接的超时时间，默认值2000，网络比较好的情况下，尽量改小一点
+  MaxAutoRetries: 0     #对当前实例的重试次数，默认0
+  MaxAutoRetriesNextServer: 0 #对切换实例的重试次数，默认1
+custom:
+  ribbon:
+    OkToRetryOnAllOperations: false
+    ReadTimeout: 3000
+    ConnectTimeout: 500
+    MaxAutoRetries: 0
+    MaxAutoRetriesNextServer: 0

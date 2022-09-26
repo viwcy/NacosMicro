@@ -1,0 +1,87 @@
+spring:
+  datasource:
+    username: root
+    password: yaoyao0203
+    url: jdbc:mysql://localhost:3306/nacos_micro_gateway?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=GMT%2b8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: 7f89b3d1-fe2e-427a-8fc0-68f86f982b4d
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+        namespace: 7f89b3d1-fe2e-427a-8fc0-68f86f982b4d
+      username: nacos
+      password: yaoyao0203
+    gateway:
+      routes:
+        - id: custom
+          uri: lb://custom/
+          predicates:
+            - Path=/custom/**
+          filters:
+            - StripPrefix=1
+            - name: Hystrix
+              args:
+                name: custom
+                fallbackUri: 'forward:/fallback/custom'
+        - id: mall
+          uri: lb://mall/
+          predicates:
+            - Path=/mall/**
+          filters:
+            - StripPrefix=1
+            - name: Hystrix
+              args:
+                name: mall
+                fallbackUri: 'forward:/fallback/mall'
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  global-config:
+    db-type: MYSQL
+  configuration:
+    # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    #懒加载
+    aggressive-lazy-loading: true
+    #如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
+    call-setters-on-nulls: true
+
+logging:
+  level:
+    com.viwcy.gateway.mapper: debug
+
+#Hystrix服务熔断超时，目前支持服务级别配置，单接口级别暂不支持
+hystrix:
+  #Hystrix线程池配置
+  threadpool:
+    default:
+      coreSize: 500
+      maxQueueSize: 2000
+      queueSizeRejectionThreshold: 1500
+  #Hystrix默认熔断和超时配置
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+    custom:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+    mall:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000

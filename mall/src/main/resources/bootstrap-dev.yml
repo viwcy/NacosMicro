@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    username: root
+    password: yaoyao0203
+    url: jdbc:mysql://localhost:3306/nacos_micro_mall?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=GMT%2b8
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 10
+      max-active: 200
+      max-wait: 2000
+      filters: stat,wall
+      connect-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=3000
+      stat-view-servlet:
+        enabled: true
+        reset-enable: false
+        login-username: viwcy
+        login-password: viwcy
+        url-pattern: /druid/*
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: 7f89b3d1-fe2e-427a-8fc0-68f86f982b4d
+#      config:
+#        server-addr: 127.0.0.1:8848
+#        file-extension: yaml
+#        namespace: 7f89b3d1-fe2e-427a-8fc0-68f86f982b4d
+      username: nacos
+      password: yaoyao0203

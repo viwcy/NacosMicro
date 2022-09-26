@@ -1,0 +1,15 @@
+server:
+  port: 12000
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  profiles:
+    active: dev
+  application:
+    name: gateway
+
+jwt:
+  config:
+    header: Authorization
+    prefix: Bearer
+    secret: viwcy4611

@@ -1,0 +1,31 @@
+server:
+  port: 9003
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  profiles:
+    active: dev
+  application:
+    name: canal
+
+#canal配置
+canal:
+  destination: example
+  batchSize: 100
+  #配置规则，多个用逗号隔开
+  filter: nacos_micro_custom.user,nacos_micro_mall.goods
+  model: single
+  sleep-time: 2000
+  initial-delay: 2000
+  fixed-delay: 2000
+  cluster:
+    zk-servers: 127.0.0.1:2181
+    retry-times: 5
+    retry-interval: 10000
+  single:
+    host: 192.168.3.28
+    port: 11111
+
+logging:
+  level:
+    com.viwcy.canalstarter: debug
