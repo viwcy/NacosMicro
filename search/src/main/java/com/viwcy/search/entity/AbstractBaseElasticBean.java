@@ -18,10 +18,7 @@ public abstract class AbstractBaseElasticBean<T> implements Serializable {
 
     public T t() {
 
-        if (this instanceof AbstractBaseElasticBean) {
-            return (T) this;
-        }
-        return null;
+        return (T) this;
     }
 
     private float score = 0.0f;
