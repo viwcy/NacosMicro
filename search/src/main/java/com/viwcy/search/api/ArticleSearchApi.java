@@ -59,12 +59,6 @@ public class ArticleSearchApi extends BaseController {
         return success(elasticArticleService.queryByIds(ids));
     }
 
-    @PostMapping("/keywordSearch")
-    public ResultEntity keywordSearch(@RequestBody ElasticArticleSearchReq req) {
-
-        return success(elasticArticleService.generalSearch(req));
-    }
-
     @PostMapping("/page")
     public ResultEntity page(@RequestBody ElasticArticleSearchReq req) {
 

@@ -2,11 +2,8 @@ package com.viwcy.search.service;
 
 import com.viwcy.search.constant.SearchConstant;
 import com.viwcy.search.factory.SearchFactory;
-import com.viwcy.search.handle.ArticleSearchHandle;
 import com.viwcy.search.handle.base.BaseSearch;
 import com.viwcy.search.param.ElasticArticleSearchReq;
-import com.viwcy.search.param.base.PageReq;
-import com.viwcy.search.vo.PageVO;
 import com.viwcy.search.entity.ElasticArticle;
 import com.viwcy.search.repository.ElasticArticleRepository;
 import org.elasticsearch.action.support.WriteRequest;
@@ -25,9 +22,7 @@ public class ElasticArticleService extends AbstractElasticService<ElasticArticle
     @Resource
     private ElasticArticleRepository articleRepository;
     @Resource
-    private ArticleSearchHandle articleSearchHandle;
-    @Resource
-    private SearchFactory searchFactory;
+    private SearchFactory<ElasticArticle> searchFactory;
 
     public final void save(ElasticArticle param) {
 
@@ -51,16 +46,10 @@ public class ElasticArticleService extends AbstractElasticService<ElasticArticle
         return articleRepository.queryBatch(_ids);
     }
 
-    public final PageVO<ElasticArticle> generalSearch(ElasticArticleSearchReq req) {
-
-        PageReq pageReq = new PageReq(req.getPage(), req.getSize());
-        return articleSearchHandle.generalPage(ElasticArticle.class, req, pageReq);
-    }
-
     public final List<ElasticArticle> list(ElasticArticleSearchReq req) {
 
-        BaseSearch handler = searchFactory.getHandler(SearchConstant.SearchHandler.ARTICLE_SEARCH_HANDLER);
-        return handler.list(ElasticArticle.class, req);
+        BaseSearch<ElasticArticle> handler = searchFactory.getHandler(SearchConstant.SearchHandler.ARTICLE_SEARCH_HANDLER);
+        return handler.list(req);
     }
 
     @Override

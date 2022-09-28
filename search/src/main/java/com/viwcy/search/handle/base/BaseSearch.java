@@ -9,9 +9,9 @@ import java.util.List;
 /**
  * TODO  Copyright (c) yun lu 2021 Fau (viwcy4611@gmail.com), ltd
  */
-public interface BaseSearch {
+public interface BaseSearch<T> {
 
-    <T> PageVO<T> page(Class<T> clazz, BaseSearchReq req);
+    PageVO<T> page(BaseSearchReq req);
 
-    <T> List<T> list(Class<T> clazz, BaseSearchReq req);
+    List<T> list(BaseSearchReq req);
 }

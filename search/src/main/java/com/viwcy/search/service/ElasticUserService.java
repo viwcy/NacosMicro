@@ -1,10 +1,6 @@
 package com.viwcy.search.service;
 
 import com.viwcy.search.constant.SearchConstant;
-import com.viwcy.search.handle.UserSearchHandle;
-import com.viwcy.search.param.ElasticUserSearchReq;
-import com.viwcy.search.param.base.PageReq;
-import com.viwcy.search.vo.PageVO;
 import com.viwcy.search.entity.ElasticUser;
 import com.viwcy.search.repository.ElasticUserRepository;
 import org.elasticsearch.action.support.WriteRequest;
@@ -20,8 +16,6 @@ import java.util.Set;
 @Service
 public class ElasticUserService extends AbstractElasticService<ElasticUser> {
 
-    @Resource
-    private UserSearchHandle userSearchHandle;
     @Resource
     private ElasticUserRepository userRepository;
 
@@ -45,12 +39,6 @@ public class ElasticUserService extends AbstractElasticService<ElasticUser> {
     public final List<ElasticUser> queryBatch(Set<Long> _ids) {
 
         return userRepository.queryBatch(_ids);
-    }
-
-    public final PageVO<ElasticUser> generalSearch(ElasticUserSearchReq req) {
-
-        PageReq pageReq = new PageReq(req.getPage(), req.getSize());
-        return userSearchHandle.generalPage(ElasticUser.class, req, pageReq);
     }
 
     @Override

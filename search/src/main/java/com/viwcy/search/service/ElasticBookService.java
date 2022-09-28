@@ -3,10 +3,8 @@ package com.viwcy.search.service;
 import com.viwcy.search.constant.SearchConstant;
 import com.viwcy.search.entity.ElasticBook;
 import com.viwcy.search.factory.SearchFactory;
-import com.viwcy.search.handle.BookSearchHandle;
 import com.viwcy.search.handle.base.BaseSearch;
 import com.viwcy.search.param.ElasticBookSearchReq;
-import com.viwcy.search.param.base.PageReq;
 import com.viwcy.search.repository.ElasticBookRepository;
 import com.viwcy.search.vo.PageVO;
 import org.elasticsearch.action.support.WriteRequest;
@@ -26,9 +24,7 @@ public class ElasticBookService extends AbstractElasticService<ElasticBook> {
     @Resource
     private ElasticBookRepository elasticBookRepository;
     @Resource
-    private BookSearchHandle bookSearchHandle;
-    @Resource
-    private SearchFactory searchFactory;
+    private SearchFactory<ElasticBook> searchFactory;
 
     public final void save(ElasticBook param) {
 
@@ -57,12 +53,6 @@ public class ElasticBookService extends AbstractElasticService<ElasticBook> {
         return super.updateById(String.valueOf(param.get("_id")), (Map<String, Object>) param.get("doc"), WriteRequest.RefreshPolicy.WAIT_UNTIL);
     }
 
-    public final PageVO<ElasticBook> generalSearch(ElasticBookSearchReq req) {
-
-        PageReq pageReq = new PageReq(req.getPage(), req.getSize());
-        return bookSearchHandle.generalPage(ElasticBook.class, req, pageReq);
-    }
-
     public final ElasticBook insert(ElasticBook param) {
 
         buildTime(param, param.getId());
@@ -77,8 +67,8 @@ public class ElasticBookService extends AbstractElasticService<ElasticBook> {
 
     public final PageVO<ElasticBook> search(ElasticBookSearchReq req) {
 
-        BaseSearch handler = searchFactory.getHandler(SearchConstant.SearchHandler.BOOK_SEARCH_HANDLER);
-        return handler.page(ElasticBook.class, req);
+        BaseSearch<ElasticBook> handler = searchFactory.getHandler(SearchConstant.SearchHandler.BOOK_SEARCH_HANDLER);
+        return handler.page(req);
     }
 
     @Override

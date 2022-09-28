@@ -66,12 +66,6 @@ public class BookSearchApi extends BaseController {
         return success(elasticBookService.update(param));
     }
 
-    @PostMapping("/keywordSearch")
-    public ResultEntity keywordSearch(@RequestBody ElasticBookSearchReq req) {
-
-        return success(elasticBookService.generalSearch(req));
-    }
-
     @PostMapping("/search")
     public ResultEntity search(@RequestBody ElasticBookSearchReq req) {
 

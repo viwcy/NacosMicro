@@ -7,5 +7,5 @@ import org.springframework.stereotype.Component;
  * TODO  Copyright (c) yun lu 2021 Fau (viwcy4611@gmail.com), ltd
  */
 @Component
-public final class SearchFactory extends BaseFactory<BaseSearch> {
+public final class SearchFactory<T> extends BaseFactory<BaseSearch<T>> {
 }

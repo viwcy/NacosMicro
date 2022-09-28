@@ -2,7 +2,6 @@ package com.viwcy.search.api;
 
 import com.viwcy.basecommon.common.BaseController;
 import com.viwcy.basecommon.common.ResultEntity;
-import com.viwcy.search.param.ElasticUserSearchReq;
 import com.viwcy.search.entity.ElasticUser;
 import com.viwcy.search.service.ElasticUserService;
 import org.springframework.web.bind.annotation.*;
@@ -43,12 +42,6 @@ public class UserSearchApi extends BaseController {
     public ResultEntity queryByIds(@RequestParam Set<Long> ids) {
 
         return success(elasticUserService.queryByIds(ids));
-    }
-
-    @PostMapping("/keywordSearch")
-    public ResultEntity keywordSearch(@RequestBody ElasticUserSearchReq req) {
-
-        return success(elasticUserService.generalSearch(req));
     }
 
     @PostMapping("/save")

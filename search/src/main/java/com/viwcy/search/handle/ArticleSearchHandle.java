@@ -1,6 +1,7 @@
 package com.viwcy.search.handle;
 
 import com.viwcy.search.constant.SearchConstant;
+import com.viwcy.search.entity.ElasticArticle;
 import com.viwcy.search.handle.base.AbstractBaseSearch;
 import com.viwcy.search.param.base.BaseSearchReq;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -15,7 +16,7 @@ import java.util.List;
  * TODO  Copyright (c) yun lu 2022 Fau (viwcy4611@gmail.com), ltd
  */
 @Service(SearchConstant.SearchHandler.ARTICLE_SEARCH_HANDLER)
-public class ArticleSearchHandle extends AbstractBaseSearch {
+public class ArticleSearchHandle extends AbstractBaseSearch<ElasticArticle> {
 
     @Override
     protected SearchSourceBuilder buildQuery(BaseSearchReq req) {

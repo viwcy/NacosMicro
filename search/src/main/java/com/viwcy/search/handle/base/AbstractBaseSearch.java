@@ -2,8 +2,6 @@ package com.viwcy.search.handle.base;
 
 import com.viwcy.basecommon.exception.BaseException;
 import com.viwcy.basecommon.exception.BusinessException;
-import com.viwcy.search.dto.SortDTO;
-import com.viwcy.search.dto.TimeDTO;
 import com.viwcy.search.param.base.PageReq;
 import com.viwcy.search.util.SearchHelper;
 import com.viwcy.search.param.base.BaseSearchReq;
@@ -11,14 +9,13 @@ import com.viwcy.search.vo.PageVO;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.Collection;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -27,13 +24,13 @@ import java.util.Objects;
  * TODO  Copyright (c) yun lu 2021 Fau (viwcy4611@gmail.com), ltd
  */
 @Slf4j
-public abstract class AbstractBaseSearch implements BaseSearch {
+public abstract class AbstractBaseSearch<T> implements BaseSearch<T> {
 
     @Autowired
     private SearchHelper searchHelper;
 
     @Override
-    public <T> PageVO<T> page(Class<T> clazz, BaseSearchReq req) {
+    public PageVO<T> page(BaseSearchReq req) {
 
         PageVO<T> vo = new PageVO<>();
         PageReq page = new PageReq(req.getPage(), req.getSize());
@@ -41,20 +38,20 @@ public abstract class AbstractBaseSearch implements BaseSearch {
         if (Objects.isNull(response)) {
             return vo;
         }
-        List<T> list = searchHelper.handleResponse(clazz, response, req.getHighLightFields());
+        List<T> list = searchHelper.handleResponse(handleClass(), response, req.getHighLightFields());
         vo.setResult(list);
         vo.setTotal(response.getHits().getTotalHits().value);
         return vo;
     }
 
     @Override
-    public <T> List<T> list(Class<T> clazz, BaseSearchReq req) {
+    public List<T> list(BaseSearchReq req) {
 
         SearchResponse response = response(req, null);
         if (Objects.isNull(response)) {
             return Collections.emptyList();
         }
-        return searchHelper.handleResponse(clazz, response, req.getHighLightFields());
+        return searchHelper.handleResponse(handleClass(), response, req.getHighLightFields());
     }
 
     protected final void preCheck(BaseSearchReq req) {
@@ -93,59 +90,13 @@ public abstract class AbstractBaseSearch implements BaseSearch {
     }
 
     /**
-     * 构建通用builder，多字段查询keyword，限制时间，排序等
+     * 获取T.class泛型类
      */
-    public final <T> PageVO<T> generalPage(Class<T> clazz, BaseSearchReq req, PageReq page) {
-
-        List<String> fields = req.getFields();
-        String keyword = req.getKeyword();
-        preCheck(req);
-
-        //总节点
-        BoolQueryBuilder root = QueryBuilders.boolQuery();
-
-        BoolQueryBuilder rootKeywordBuilder = QueryBuilders.boolQuery();
-        for (int i = 0; i < fields.size(); i++) {
-            String field = fields.get(i);
-            rootKeywordBuilder.should(QueryBuilders.boolQuery().must(QueryBuilders.matchPhraseQuery(field, keyword).boost(getBoost(field))));
-        }
-        root.must(rootKeywordBuilder);
-
-        SearchSourceBuilder builder = new SearchSourceBuilder();
-
-        //时间
-        BoolQueryBuilder rangeBuilder = QueryBuilders.boolQuery();
-        Collection<TimeDTO> ranges = req.getRanges();
-        if (!CollectionUtils.isEmpty(ranges)) {
-            ranges.stream().forEach(range -> {
-                rangeBuilder.must(QueryBuilders.rangeQuery(range.getField()).gte(range.getStart()).lte(range.getEnd()));
-            });
-            root.must(rangeBuilder);
-        }
-
-        //排序
-        Collection<SortDTO> sorts = req.getOrders();
-        if (!CollectionUtils.isEmpty(sorts)) {
-            for (SortDTO sort : sorts) {
-                builder.sort(sort.getField(), sort.getOrder());
-            }
-        }
-
-        //分页
-        buildPage(builder, page.getPage(), page.getSize());
-
-        //高亮
-        searchHelper.setHighLight(req.getHighLightFields(), builder);
-
-        builder.query(root);
-        SearchRequest searchRequest = new SearchRequest(req.getIndices());
-        searchRequest.source(builder);
-        SearchResponse response = searchHelper.searchResponse(searchRequest);
-        PageVO<T> vo = new PageVO<>();
-        List<T> list = searchHelper.handleResponse(clazz, response, req.getHighLightFields());
-        vo.setResult(list);
-        vo.setTotal(response.getHits().getTotalHits().value);
-        return vo;
+    private final Class<T> handleClass() {
+        Class clazz = this.getClass();
+        ParameterizedType parameterizedType = (ParameterizedType) clazz.getGenericSuperclass();
+        Type[] types = parameterizedType.getActualTypeArguments();
+        return (Class<T>) types[0];
     }
 
     /**

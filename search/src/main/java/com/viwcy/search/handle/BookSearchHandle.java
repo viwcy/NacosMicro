@@ -2,6 +2,7 @@ package com.viwcy.search.handle;
 
 import com.viwcy.search.constant.SearchConstant;
 import com.viwcy.search.dto.TimeDTO;
+import com.viwcy.search.entity.ElasticBook;
 import com.viwcy.search.handle.base.AbstractBaseSearch;
 import com.viwcy.search.param.base.BaseSearchReq;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -16,7 +17,7 @@ import java.util.Collection;
  * TODO  Copyright (c) yun lu 2022 Fau (viwcy4611@gmail.com), ltd
  */
 @Service(SearchConstant.SearchHandler.BOOK_SEARCH_HANDLER)
-public class BookSearchHandle extends AbstractBaseSearch {
+public class BookSearchHandle extends AbstractBaseSearch<ElasticBook> {
 
     @Override
     protected SearchSourceBuilder buildQuery(BaseSearchReq req) {
