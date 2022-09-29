@@ -21,7 +21,7 @@ public class BaseFactory<T> {
     public T getHandler(String key) {
         T handle = _handler.get(key);
         if (Objects.isNull(handle)) {
-            throw new BaseException("BaseFactory has error，key = " + key);
+            throw new BaseException("query handler has not null，key = " + key);
         }
         log.info("query handler = " + handle.getClass().getSimpleName());
         return handle;
