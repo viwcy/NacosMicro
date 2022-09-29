@@ -16,7 +16,7 @@ public class ElasticBookSearchReq extends BaseSearchReq {
     @Override
     public String[] getIndices() {
 
-        List<String> list = Lists.newArrayList(SearchConstant.BookIndex._INDEX);
+        List<String> list = Lists.newArrayList(SearchConstant.BookIndex.INDEX);
         return list.toArray(new String[]{});
     }
 }

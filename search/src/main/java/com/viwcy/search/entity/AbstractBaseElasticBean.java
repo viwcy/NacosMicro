@@ -14,6 +14,7 @@ public abstract class AbstractBaseElasticBean<T> implements Serializable {
 
     private static final long serialVersionUID = -2904259238579192130L;
 
+    //ES自身主键ID
     public abstract String _id();
 
     public T t() {

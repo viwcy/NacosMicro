@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = SearchConstant.UserIndex._INDEX)
+@Document(indexName = SearchConstant.UserIndex.INDEX)
 @Setting(settingPath = "user/user_setting.json")
 @Mapping(mappingPath = "user/user_mapping.json")
 public class ElasticUser extends AbstractBaseElasticBean<ElasticUser> implements Serializable {

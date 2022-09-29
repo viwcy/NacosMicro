@@ -72,12 +72,12 @@ public class ElasticBookService extends AbstractElasticService<ElasticBook> {
     }
 
     @Override
-    protected String _index() {
-        return SearchConstant.BookIndex._INDEX;
+    protected String index() {
+        return SearchConstant.BookIndex.INDEX;
     }
 
     @Override
-    protected String _idField() {
-        return SearchConstant.BookIndex._ID_FIELD;
+    protected String idField() {
+        return SearchConstant.BookIndex.ID_FIELD;
     }
 }

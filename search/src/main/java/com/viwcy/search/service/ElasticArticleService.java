@@ -53,12 +53,12 @@ public class ElasticArticleService extends AbstractElasticService<ElasticArticle
     }
 
     @Override
-    protected String _index() {
-        return SearchConstant.ArticleIndex._INDEX;
+    protected String index() {
+        return SearchConstant.ArticleIndex.INDEX;
     }
 
     @Override
-    protected String _idField() {
-        return SearchConstant.ArticleIndex._ID_FIELD;
+    protected String idField() {
+        return SearchConstant.ArticleIndex.ID_FIELD;
     }
 }

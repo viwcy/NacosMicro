@@ -24,8 +24,8 @@ public class SearchConstant {
      * index user
      */
     public final class UserIndex {
-        public static final String _INDEX = "user";
-        public static final String _ID_FIELD = "id";
+        public static final String INDEX = "user";
+        public static final String ID_FIELD = "id";
     }
 
 
@@ -33,15 +33,15 @@ public class SearchConstant {
      * index article
      */
     public final class ArticleIndex {
-        public static final String _INDEX = "article";
-        public static final String _ID_FIELD = "id";
+        public static final String INDEX = "article";
+        public static final String ID_FIELD = "id";
     }
 
     /**
      * index book
      */
     public final class BookIndex {
-        public static final String _INDEX = "book";
-        public static final String _ID_FIELD = "id";
+        public static final String INDEX = "book";
+        public static final String ID_FIELD = "id";
     }
 }

@@ -16,7 +16,7 @@ public class ElasticUserSearchReq extends BaseSearchReq {
     @Override
     public String[] getIndices() {
 
-        List<String> list = Lists.newArrayList(SearchConstant.UserIndex._INDEX);
+        List<String> list = Lists.newArrayList(SearchConstant.UserIndex.INDEX);
         return list.toArray(new String[]{});
     }
 }

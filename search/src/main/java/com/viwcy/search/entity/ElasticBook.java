@@ -18,7 +18,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = SearchConstant.BookIndex._INDEX)
+@Document(indexName = SearchConstant.BookIndex.INDEX)
 @Setting(settingPath = "book/book_setting.json")
 @Mapping(mappingPath = "book/book_mapping.json")
 public class ElasticBook extends AbstractBaseElasticBean<ElasticBook> implements Serializable {

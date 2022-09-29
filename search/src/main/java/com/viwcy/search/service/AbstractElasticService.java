@@ -39,7 +39,7 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
      */
     public T queryById(Long id) {
 
-        SearchRequest searchRequest = queryByIdRequest(_index(), _idField(), id);
+        SearchRequest searchRequest = queryByIdRequest(index(), idField(), id);
         List<T> list = searchHelper.execute(handleClass(), searchRequest);
         if (CollectionUtils.isEmpty(list)) {
             return null;
@@ -52,7 +52,7 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
      */
     public List<T> queryByIds(Set<Long> ids) {
 
-        SearchRequest searchRequest = queryByIdsRequest(_index(), _idField(), ids);
+        SearchRequest searchRequest = queryByIdsRequest(index(), idField(), ids);
         return searchHelper.execute(handleClass(), searchRequest);
     }
 
@@ -63,7 +63,7 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
 
         boolean update = false;
         try {
-            UpdateRequest request = new UpdateRequest(_index(), _id);
+            UpdateRequest request = new UpdateRequest(index(), _id);
             request.setRefreshPolicy(refreshPolicy);
             request.doc(param);
             restHighLevelClient.update(request, RequestOptions.DEFAULT);
@@ -84,7 +84,7 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
              * IndexRequest的OpType支持四种设置方式，
              * 默认private OpType opType = OpType.INDEX //  有相同的_id数据就会进行覆盖
              */
-            IndexRequest request = new IndexRequest(_index()).id(param._id()).source(JSON.toJSONString(param.t()), XContentType.JSON);
+            IndexRequest request = new IndexRequest(index()).id(param._id()).source(JSON.toJSONString(param.t()), XContentType.JSON);
             request.setRefreshPolicy(refreshPolicy);//保持此请求打开，直到刷新使此请求的内容对搜索可见
             restHighLevelClient.index(request, RequestOptions.DEFAULT);
             return true;
@@ -105,7 +105,7 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
             }
             final BulkRequest bulkRequest = new BulkRequest();
             param.stream().forEach(bean -> {
-                IndexRequest request = new IndexRequest(_index()).id(bean._id()).source(JSON.toJSONString(bean.t()), XContentType.JSON);
+                IndexRequest request = new IndexRequest(index()).id(bean._id()).source(JSON.toJSONString(bean.t()), XContentType.JSON);
                 bulkRequest.add(request);
             });
             bulkRequest.setRefreshPolicy(refreshPolicy);
@@ -168,10 +168,10 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
     /**
      * 索引名称
      */
-    protected abstract String _index();
+    protected abstract String index();
 
     /**
      * 主键ID字段名称
      */
-    protected abstract String _idField();
+    protected abstract String idField();
 }

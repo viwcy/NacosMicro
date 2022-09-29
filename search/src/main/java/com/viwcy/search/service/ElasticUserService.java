@@ -42,12 +42,12 @@ public class ElasticUserService extends AbstractElasticService<ElasticUser> {
     }
 
     @Override
-    protected String _index() {
-        return SearchConstant.UserIndex._INDEX;
+    protected String index() {
+        return SearchConstant.UserIndex.INDEX;
     }
 
     @Override
-    protected String _idField() {
-        return SearchConstant.UserIndex._ID_FIELD;
+    protected String idField() {
+        return SearchConstant.UserIndex.ID_FIELD;
     }
 }
