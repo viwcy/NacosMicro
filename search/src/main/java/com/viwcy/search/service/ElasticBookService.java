@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -48,9 +47,9 @@ public class ElasticBookService extends AbstractElasticService<ElasticBook> {
         return elasticBookRepository.queryBatch(_ids);
     }
 
-    public final boolean update(Map<String, Object> param) {
+    public final boolean update(ElasticBook param) {
 
-        return super.updateById(String.valueOf(param.get("_id")), (Map<String, Object>) param.get("doc"), WriteRequest.RefreshPolicy.WAIT_UNTIL);
+        return super.updateById(param, WriteRequest.RefreshPolicy.WAIT_UNTIL);
     }
 
     public final ElasticBook insert(ElasticBook param) {

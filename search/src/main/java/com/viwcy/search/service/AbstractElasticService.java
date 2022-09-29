@@ -59,17 +59,17 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
     /**
      * doc的主键_id更新数据
      */
-    public boolean updateById(String _id, Map<String, Object> param, WriteRequest.RefreshPolicy refreshPolicy) {
+    public boolean updateById(AbstractBaseElasticBean<T> param, WriteRequest.RefreshPolicy refreshPolicy) {
 
         boolean update = false;
         try {
-            UpdateRequest request = new UpdateRequest(index(), _id);
+            UpdateRequest request = new UpdateRequest(index(), param._id());
             request.setRefreshPolicy(refreshPolicy);
-            request.doc(param);
+            request.doc(JSON.toJSONString(param), XContentType.JSON);
             restHighLevelClient.update(request, RequestOptions.DEFAULT);
             update = true;
         } catch (IOException e) {
-            log.error("update has error , id = {}, e = {}", _id, e);
+            log.error("update has error , id = {}, e = {}", param._id(), e);
         }
         return update;
     }
@@ -77,7 +77,7 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
     /**
      * 保存或更新ES
      */
-    public <T extends AbstractBaseElasticBean> boolean saveOrUpdate(AbstractBaseElasticBean<T> param, WriteRequest.RefreshPolicy refreshPolicy) {
+    public boolean saveOrUpdate(AbstractBaseElasticBean<T> param, WriteRequest.RefreshPolicy refreshPolicy) {
 
         try {
             /**
@@ -97,7 +97,7 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
     /**
      * 批量保存或更新ES
      */
-    public <T extends AbstractBaseElasticBean> boolean saveOrUpdateBatch(List<T> param, WriteRequest.RefreshPolicy refreshPolicy) {
+    public boolean saveOrUpdateBatch(List<T> param, WriteRequest.RefreshPolicy refreshPolicy) {
 
         try {
             if (CollectionUtils.isEmpty(param)) {
@@ -117,7 +117,7 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
         return false;
     }
 
-    protected final <T extends AbstractBaseElasticBean> void buildTime(AbstractBaseElasticBean<T> param, Long id) {
+    protected final void buildTime(AbstractBaseElasticBean<T> param, Long id) {
 
         AbstractBaseElasticBean<T> bean = queryById(id);
         Date date = new Date();

@@ -61,7 +61,7 @@ public class BookSearchApi extends BaseController {
     }
 
     @PostMapping("/update")
-    public ResultEntity update(@RequestBody Map<String, Object> param) {
+    public ResultEntity update(@RequestBody ElasticBook param) {
 
         return success(elasticBookService.update(param));
     }
