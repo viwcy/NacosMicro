@@ -1,6 +1,7 @@
 package com.viwcy.search.service;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Sets;
 import com.viwcy.search.entity.AbstractBaseElasticBean;
 import com.viwcy.search.util.SearchHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
      */
     public T queryById(Long id) {
 
-        SearchRequest searchRequest = queryByIdRequest(index(), idField(), id);
+        SearchRequest searchRequest = queryByIdsRequest(index(), idField(), Sets.newHashSet(id));
         List<T> list = searchHelper.execute(handleClass(), searchRequest);
         if (CollectionUtils.isEmpty(list)) {
             return null;
@@ -131,17 +132,6 @@ public abstract class AbstractElasticService<T extends AbstractBaseElasticBean> 
             }
         }
         param.setUpdateTime(date);
-    }
-
-    private final SearchRequest queryByIdRequest(String index, String field, Long id) {
-
-        SearchRequest searchRequest = new SearchRequest(index);
-        SearchSourceBuilder builder = new SearchSourceBuilder();
-        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        boolQueryBuilder.must(QueryBuilders.termQuery(field, id));
-        builder.query(boolQueryBuilder);
-        searchRequest.source(builder);
-        return searchRequest;
     }
 
     private final SearchRequest queryByIdsRequest(String index, String field, Set<Long> ids) {
