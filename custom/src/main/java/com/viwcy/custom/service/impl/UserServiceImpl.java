@@ -19,7 +19,6 @@ import com.viwcy.basemodel.dto.UserPageDTO;
 import com.viwcy.basemodel.entity.PageEntity;
 import com.viwcy.basemodel.mapper.UserMapper;
 import com.viwcy.custom.handle.RegisterChain;
-import com.viwcy.custom.service.UserHelper;
 import com.viwcy.custom.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +46,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final UserMapper userMapper;
     private final HttpServletRequest request;
     private final JwtProperties jwtProperties;
-    private final UserHelper userHelper;
     private final UserConvert userConvert;
     private final RegisterChain registerChain;
 
@@ -57,7 +55,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         //校验
         registerChain.check(user);
-//        userHelper.registerVerify(user.getUserName(), user.getPhone(), user.getEmail());
         //security加密存储，对于同一个明文，每次加密之后的密文都是不同的。
         user.setPassword(encoder.encode(user.getPassword()));
         return this.save(user);
