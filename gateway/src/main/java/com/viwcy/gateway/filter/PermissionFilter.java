@@ -5,7 +5,6 @@ import com.viwcy.gateway.dto.UserDTO;
 import com.viwcy.gateway.service.FilterHelper;
 import com.viwcy.gateway.service.PermissionHelper;
 import com.viwcy.gateway.util.JwtUtil;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -28,8 +27,10 @@ public class PermissionFilter extends AbstractFilter {
     private FilterHelper filterHelper;
 
     @Override
-    protected Mono<Void> doFilter(String jwt, ServerWebExchange exchange, GatewayFilterChain chain) {
+    protected Mono<Void> doFilter(FilterContext context) {
 
+        ServerWebExchange exchange = context.getExchange();
+        String jwt = context.getJwt();
         //获取请求url
         String requestUrl = exchange.getRequest().getURI().getPath();
         try {

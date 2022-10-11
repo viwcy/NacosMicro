@@ -58,7 +58,8 @@ public class PreFilter implements GlobalFilter, Ordered {
         String jwt = exchange.getRequest().getHeaders().getFirst(header);
 
         //链化校验（登录，权限等）
-        Mono<Void> execute = filterChain.filter(jwt, exchange, chain);
+        FilterContext context = FilterContext.builder().jwt(jwt).exchange(exchange).build();
+        Mono<Void> execute = filterChain.filter(context);
         if (!Objects.isNull(execute)) {
             return execute;
         }

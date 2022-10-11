@@ -2,9 +2,7 @@ package com.viwcy.gateway.filter;
 
 import lombok.Data;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
@@ -24,9 +22,9 @@ public class FilterChain implements InitializingBean {
     private AbstractFilter abstractFilter;
 
     //外部调用
-    public Mono<Void> filter(String jwt, ServerWebExchange exchange, GatewayFilterChain chain) {
+    public Mono<Void> filter(FilterContext context) {
 
-        return abstractFilter.filter(jwt, exchange, chain);
+        return abstractFilter.filter(context);
     }
 
     //链化所有节点

@@ -6,7 +6,6 @@ import com.viwcy.gateway.util.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -28,8 +27,10 @@ public class JwtFilter extends AbstractFilter {
     private JwtUtil jwtUtil;
 
     @Override
-    protected Mono<Void> doFilter(String jwt, ServerWebExchange exchange, GatewayFilterChain chain) {
+    protected Mono<Void> doFilter(FilterContext context) {
 
+        String jwt = context.getJwt();
+        ServerWebExchange exchange = context.getExchange();
         ServerHttpResponse response = exchange.getResponse();
         if (StringUtils.isBlank(jwt)) {
             return filterHelper.response(response, JwtEnum.JWT_MISS.getCode(), JwtEnum.JWT_MISS.getMessage());
