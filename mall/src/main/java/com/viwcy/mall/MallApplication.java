@@ -1,5 +1,6 @@
 package com.viwcy.mall;
 
+import com.dtflys.forest.springboot.annotation.ForestScan;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 @MapperScan(basePackages = {"com.viwcy.**.mapper"})
 @ComponentScan(basePackages = {"com.viwcy.**"})
 @EnableFeignClients
+@ForestScan(basePackages = "com.viwcy.mall.forest")
 public class MallApplication {
 
     public static void main(String[] args) {
