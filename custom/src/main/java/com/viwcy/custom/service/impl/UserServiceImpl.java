@@ -18,6 +18,7 @@ import com.viwcy.basemodel.dto.UserLoginDTO;
 import com.viwcy.basemodel.dto.UserPageDTO;
 import com.viwcy.basemodel.entity.PageEntity;
 import com.viwcy.basemodel.mapper.UserMapper;
+import com.viwcy.custom.fun.EditUserFunction;
 import com.viwcy.custom.handle.RegisterChain;
 import com.viwcy.custom.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -95,5 +96,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Page<User> result = userMapper.selectPage(page, wrapper);
         List<SimpleUserDTO> collect = result.getRecords().stream().map(userConvert::toSimpleUserDTO).collect(Collectors.toList());
         return PageEntity.of(collect, result.getTotal());
+    }
+
+    @Override
+    public String add(User user) {
+        log.info("user = " + user);
+        return "ADD";
+    }
+
+    @Override
+    public String updated(User user) {
+        log.info("user = " + user);
+        return "UPDATE";
+    }
+
+    @Override
+    public String edit(Integer type) {
+        User user = jwtUtil.getUser();
+        EditUserFunction.EUFunction<User, String> function = EditUserFunction._function.get(type);
+        return function.apply(user);
     }
 }

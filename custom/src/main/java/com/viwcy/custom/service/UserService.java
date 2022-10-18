@@ -22,4 +22,10 @@ public interface UserService extends IService<User> {
     JSONObject refresh();
 
     PageEntity<List<SimpleUserDTO>> queryPage(UserPageDTO dto);
+
+    String add(User user);
+
+    String updated(User user);
+
+    String edit(Integer type);
 }

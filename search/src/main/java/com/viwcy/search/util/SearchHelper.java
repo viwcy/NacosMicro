@@ -42,8 +42,8 @@ public class SearchHelper {
 
         List<ElasticBook> list = new ArrayList<ElasticBook>(3) {{
             add(new ElasticBook(1L, "zhangsan", "《哦哦》"));
-            add(new ElasticBook(1L, "zhangsan1", "《哦哦》1"));
-            add(new ElasticBook(1L, "zhangsan", "《哦哦》2"));
+            add(new ElasticBook(2L, "zhangsan1", "《哦哦》1"));
+            add(new ElasticBook(3L, "zhangsan", "《哦哦》2"));
         }};
         List<ElasticBook> zhangsan = list.stream().filter(x -> x.getAuthor().equals("zhangsan")).collect(Collectors.toList());
         System.out.println(zhangsan);
@@ -62,6 +62,19 @@ public class SearchHelper {
 
         Long reduce = Stream.of(list.stream().map(ElasticBook::getId).collect(Collectors.toList()).toArray(new Long[]{})).reduce(0L, Long::sum);
         System.out.println(reduce);
+
+        Map<Long, List<String>> collect3 = list.stream().collect(Collectors.groupingBy(ElasticBook::getId, Collectors.mapping(ElasticBook::getAuthor, Collectors.toList())));
+        System.out.println(collect3);
+
+        Stream<String> stream = Stream.of("hello", "felord.cn");
+        List<String> collect4 = stream.peek(System.out::println).collect(Collectors.toList());
+        System.out.println(collect4);
+
+//        List<ElasticBook> collect5 = list.stream().filter(s -> s.getAuthor().equals("zhangsan")).peek(s -> s.setAuthor(s.getAuthor() + "_plus")).collect(Collectors.toList());
+//        System.out.println(collect5);
+
+        Map<Long, String> collect6 = list.stream().collect(Collectors.toMap(ElasticBook::getId, ElasticBook::getAuthor, (k1, k2) -> k2));
+        System.out.println(collect6);
     }
 
     @Resource

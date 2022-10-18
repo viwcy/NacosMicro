@@ -52,4 +52,10 @@ public class UserApi extends BaseController {
     public ResultEntity<PageEntity<List<SimpleUserDTO>>> page(@RequestBody UserPageDTO dto) {
         return success(userService.queryPage(dto));
     }
+
+    @PostMapping("/edit")
+    public ResultEntity edit(@RequestParam Integer type) {
+
+        return success(userService.edit(type));
+    }
 }
