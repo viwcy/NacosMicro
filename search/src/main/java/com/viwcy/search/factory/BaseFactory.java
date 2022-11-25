@@ -1,7 +1,6 @@
 package com.viwcy.search.factory;
 
 
-import com.viwcy.basecommon.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,7 +20,7 @@ public class BaseFactory<T> {
     public T getHandler(String key) {
         T handle = _handler.get(key);
         if (Objects.isNull(handle)) {
-            throw new BaseException("query handler has not null，key = " + key);
+            throw new IllegalArgumentException("query handler is null，key = " + key);
         }
         log.info("query handler = " + handle.getClass().getSimpleName());
         return handle;

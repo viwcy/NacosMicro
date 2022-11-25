@@ -12,13 +12,25 @@ public class SearchConstant {
     public static final String POST_TAG = "</span>";
 
     /**
-     * handler
+     * 默认分页查询深度from + size<=10000，可做适当更改（不建议，严重影响性能）
      */
-    public final class SearchHandler {
-        public static final String USER_SEARCH_HANDLER = "userSearchHandle";
-        public static final String ARTICLE_SEARCH_HANDLER = "articleSearchHandle";
-        public static final String BOOK_SEARCH_HANDLER = "bookSearchHandle";
-    }
+    public static final int DEFAULT_MAX_SIZE = 10000;
+
+    public static final int MINIMUM_SHOULD_MATCH = 1;
+
+    public static final int PAGE_TOTAL_FLAG = 0;
+
+    public static final long DEFAULT_COUNT = 0;
+
+    /**
+     * 计算count的字段，_index代表当前索引
+     */
+    public static final String COUNT_FIELD = "_index";
+
+    /**
+     * 聚合count(*)的字段名称，相当于MySQL的别名
+     */
+    public static final String COUNT_NAME = "_count";
 
     /**
      * index user
@@ -26,22 +38,10 @@ public class SearchConstant {
     public final class UserIndex {
         public static final String INDEX = "user";
         public static final String ID_FIELD = "id";
+        public static final String NAME_FIELD = "name";
+        public static final String PROFILE_FIELD = "profile";
+        public static final String ADDRESS_FIELD = "address";
+        public static final String CREATE_TIME = "createTime";
     }
 
-
-    /**
-     * index article
-     */
-    public final class ArticleIndex {
-        public static final String INDEX = "article";
-        public static final String ID_FIELD = "id";
-    }
-
-    /**
-     * index book
-     */
-    public final class BookIndex {
-        public static final String INDEX = "book";
-        public static final String ID_FIELD = "id";
-    }
 }

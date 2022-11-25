@@ -1,22 +1,24 @@
-package com.viwcy.search.util;
+package com.viwcy.search.service.helper;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.viwcy.basecommon.exception.BaseException;
 import com.viwcy.search.constant.SearchConstant;
-import com.viwcy.search.entity.ElasticBook;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.text.Text;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -27,55 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * TODO  Copyright (c) yun lu 2021 Fau (viwcy4611@gmail.com), ltd
  */
 @Slf4j
 @Component
-public class SearchHelper {
-
-    public static void main(String[] args) {
-
-        List<ElasticBook> list = new ArrayList<ElasticBook>(3) {{
-            add(new ElasticBook(1L, "zhangsan", "《哦哦》"));
-            add(new ElasticBook(2L, "zhangsan1", "《哦哦》1"));
-            add(new ElasticBook(3L, "zhangsan", "《哦哦》2"));
-        }};
-        List<ElasticBook> zhangsan = list.stream().filter(x -> x.getAuthor().equals("zhangsan")).collect(Collectors.toList());
-        System.out.println(zhangsan);
-
-        Map<Long, ElasticBook> map = list.stream().collect(Collectors.toMap(ElasticBook::getId, Function.identity(), (k1, k2) -> k2));
-        System.out.println(map);
-
-        Map<Long, Long> collect = list.stream().collect(Collectors.groupingBy(ElasticBook::getId, Collectors.counting()));
-        System.out.println(collect);
-
-        Map<Long, List<ElasticBook>> collect1 = list.stream().collect(Collectors.groupingBy(ElasticBook::getId, Collectors.toList()));
-        System.out.println(collect1);
-
-        Map<String, List<ElasticBook>> collect2 = list.stream().collect(Collectors.groupingBy(x -> x.getId() + "-" + x.getAuthor(), Collectors.toList()));
-        System.out.println(collect2);
-
-        Long reduce = Stream.of(list.stream().map(ElasticBook::getId).collect(Collectors.toList()).toArray(new Long[]{})).reduce(0L, Long::sum);
-        System.out.println(reduce);
-
-        Map<Long, List<String>> collect3 = list.stream().collect(Collectors.groupingBy(ElasticBook::getId, Collectors.mapping(ElasticBook::getAuthor, Collectors.toList())));
-        System.out.println(collect3);
-
-        Stream<String> stream = Stream.of("hello", "felord.cn");
-        List<String> collect4 = stream.peek(System.out::println).collect(Collectors.toList());
-        System.out.println(collect4);
-
-//        List<ElasticBook> collect5 = list.stream().filter(s -> s.getAuthor().equals("zhangsan")).peek(s -> s.setAuthor(s.getAuthor() + "_plus")).collect(Collectors.toList());
-//        System.out.println(collect5);
-
-        Map<Long, String> collect6 = list.stream().collect(Collectors.toMap(ElasticBook::getId, ElasticBook::getAuthor, (k1, k2) -> k2));
-        System.out.println(collect6);
-    }
+public class ElasticSearchHelper {
 
     @Resource
     private RestHighLevelClient restHighLevelClient;
@@ -89,19 +49,46 @@ public class SearchHelper {
         if (Objects.isNull(response)) {
             return new ArrayList<>();
         }
-        return handleResponse(clazz, response, Lists.newArrayList());
+        return handleResponse(clazz, response);
     }
 
     /**
-     * 执行查询，并且封装返回结果
+     * 根据BoolQueryBuilder条件查询对应数量
+     *
+     * @param index        索引
+     * @param queryBuilder 查询条件
      */
-    public final <T> List<T> execute(Class<T> clazz, SearchRequest searchRequest, List<String> highLightFields) {
+    public final Long count(final String index, BoolQueryBuilder queryBuilder) {
+
+        SearchRequest searchRequest = new SearchRequest(index);
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        searchSourceBuilder.query(queryBuilder);
+        searchSourceBuilder.size(SearchConstant.PAGE_TOTAL_FLAG);
+        searchSourceBuilder.aggregation(AggregationBuilders.count(SearchConstant.COUNT_NAME).field(SearchConstant.COUNT_FIELD));
+        searchRequest.source(searchSourceBuilder);
 
         SearchResponse response = searchResponse(searchRequest);
         if (Objects.isNull(response)) {
-            return new ArrayList<>();
+            return SearchConstant.DEFAULT_COUNT;
         }
-        return handleResponse(clazz, response, highLightFields);
+        Aggregations aggregations = response.getAggregations();
+        if (Objects.isNull(aggregations)) {
+            return SearchConstant.DEFAULT_COUNT;
+        }
+        Map<String, Aggregation> aggMap = aggregations.asMap();
+        Aggregation agg = aggMap.getOrDefault(SearchConstant.COUNT_NAME, null);
+        if (Objects.isNull(agg)) {
+            return SearchConstant.DEFAULT_COUNT;
+        }
+        try {
+            String strAgg = JSON.toJSONString(agg);
+            log.info("query count(*) aggregation = " + strAgg);
+            return JSON.parseObject(strAgg).getLong("value");
+        } catch (Exception e) {
+            log.error("conversion aggregation for count(*) has error , e =" + e);
+        }
+        return SearchConstant.DEFAULT_COUNT;
     }
 
     /**
@@ -114,7 +101,15 @@ public class SearchHelper {
             log.error("SearchHelper#execute 'searchRequest' is null");
             return null;
         }
-        log.info("DSL query : " + searchRequest.source());
+        SearchSourceBuilder source = searchRequest.source();
+        if (Objects.isNull(source)) {
+            return null;
+        }
+        int size = source.size();
+        if (size >= SearchConstant.DEFAULT_MAX_SIZE) {
+            throw new BaseException("Result is too large, from + size must be less than or equal to: [10000] but was [" + size + "]");
+        }
+        log.info("DSL query : " + source);
         try {
             response = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
         } catch (IOException e) {
@@ -127,7 +122,7 @@ public class SearchHelper {
     /**
      * 设置高亮
      */
-    public final void setHighLight(List<String> highLightFields, @NonNull SearchSourceBuilder builder) {
+    public final void setHighLight(List<String> highLightFields, SearchSourceBuilder builder) {
 
         if (CollectionUtils.isEmpty(highLightFields)) {
             return;
@@ -149,7 +144,7 @@ public class SearchHelper {
     /**
      * 替换高亮字段
      */
-    public final <T> void replaceHighLightField(@NonNull T t, @NonNull SearchHit hit, List<String> highLightFields) {
+    public final <T> void replaceHighLightField(T t, SearchHit hit, List<String> highLightFields) {
 
         if (CollectionUtils.isEmpty(highLightFields)) {
             throw new BaseException("high light fields not be empty");
@@ -176,53 +171,43 @@ public class SearchHelper {
     }
 
     /**
-     * 设置分值
+     * 根据response基础构建，返回集合
      */
-    public final <T> void setScore(@NonNull T t, SearchHit hit) {
+    private final <T> List<T> handleResponse(Class<T> clazz, SearchResponse response) {
 
-        if (Objects.isNull(hit)) {
-            throw new BaseException("SearchHit can not be null");
-        }
-        try {
-            Field score = t.getClass().getSuperclass().getDeclaredField("score");
-            if (!Objects.isNull(score)) {
-                score.setAccessible(true);
-                score.set(t, hit.getScore());
-            } else {
-                log.info("To obtain field 'score' is null");
-            }
-        } catch (Exception e) {
-            log.error("set score has error , e = " + e);
-        }
-    }
-
-    /**
-     * 处理查询响应结果，返回数据集合
-     */
-    public final <T> List<T> handleResponse(Class<T> clazz, SearchResponse response, List<String> highLightFields) {
-
-        List<T> list = new ArrayList<>();
         if (Objects.isNull(response)) {
-            return list;
+            return Lists.newArrayList();
         }
         SearchHits searchHits = response.getHits();
         if (Objects.isNull(searchHits)) {
-            return list;
+            return Lists.newArrayList();
         }
         SearchHit[] hits = searchHits.getHits();
         if (hits.length == 0) {
-            return list;
+            return Lists.newArrayList();
         }
+        List<T> list = new ArrayList<>();
         for (SearchHit hit : hits) {
             T t = JSON.parseObject(hit.getSourceAsString(), clazz);
-            //设置score分值
-            setScore(t, hit);
-            //替换高亮字段
-            if (!CollectionUtils.isEmpty(highLightFields)) {
-                replaceHighLightField(t, hit, highLightFields);
-            }
             list.add(t);
         }
         return list;
+    }
+
+    /**
+     * @param maxSize 每个小集合最大长度
+     * @param num     小集合个数
+     */
+    public final <T> List<List<T>> splitList(List<T> list, int maxSize, int num) {
+
+        List<List<T>> partition = Lists.partition(list, maxSize);
+        List<List<T>> result = new ArrayList<>();
+        for (int i = 0; i < num; i++) {
+            result.add(new ArrayList<>(2));
+        }
+        for (int i = 0; i < partition.size(); i++) {
+            result.set(i, partition.get(i));
+        }
+        return result;
     }
 }

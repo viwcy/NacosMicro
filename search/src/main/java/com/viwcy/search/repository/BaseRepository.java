@@ -1,10 +1,10 @@
 package com.viwcy.search.repository;
 
-import com.viwcy.basecommon.exception.BaseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.*;
 
@@ -14,19 +14,24 @@ import java.util.*;
 @NoRepositoryBean
 public interface BaseRepository<T, ID> extends ElasticsearchRepository<T, ID> {
 
+    Logger logger = LoggerFactory.getLogger(BaseRepository.class);
+
     /**
      * 主键ID查找
-     * 即doc的_id值，并不是业务实体的id
      */
-    default T query(ID _id) {
+    default T queryById(ID id) {
 
-        if (StringUtils.isEmpty(_id)) {
-            throw new BaseException("_id has not be null");
+        if (Objects.isNull(id)) {
+            throw new IllegalArgumentException("ID has not be null");
         }
         T t = null;
-        Optional<T> optional = this.findById(_id);
-        if (optional.isPresent()) {
-            t = optional.get();
+        try {
+            Optional<T> optional = this.findById(id);
+            if (optional.isPresent()) {
+                t = optional.get();
+            }
+        } catch (Exception e) {
+            logger.error("BaseRepository#queryById has error , e = " + e);
         }
         return t;
     }
@@ -34,39 +39,97 @@ public interface BaseRepository<T, ID> extends ElasticsearchRepository<T, ID> {
     /**
      * 主键ID集合查询
      */
-    default List<T> queryBatch(Collection<ID> _ids) {
+    default List<T> queryByIds(Collection<ID> ids) {
 
-        if (CollectionUtils.isEmpty(_ids)) {
-            throw new BaseException("Collection _ids has not be empty");
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new IllegalArgumentException("Collection ID has not be empty");
         }
-        return (List<T>) this.findAllById(_ids);
+        List<T> list = new ArrayList<>();
+        try {
+            Iterable<T> iterable = this.findAllById(ids);
+            if (Objects.isNull(iterable)) {
+                return list;
+            }
+            Iterator<T> iterator = iterable.iterator();
+            while (iterator.hasNext()) {
+                list.add(iterator.next());
+            }
+        } catch (IllegalArgumentException e) {
+            logger.error("BaseRepository#queryByIds has error , e = " + e);
+        }
+        return list;
+    }
+
+    /**
+     * 保存
+     */
+    default boolean _save(T t) {
+
+        if (Objects.isNull(t)) {
+            throw new IllegalArgumentException("T has not be null");
+        }
+        boolean flag = false;
+        try {
+            T save = this.save(t);
+            if (!Objects.isNull(save)) {
+                flag = true;
+                logger.debug("BaseRepository#saveOrUpdate success , t = " + save);
+            }
+        } catch (Exception e) {
+            logger.error("BaseRepository#saveOrUpdate has error , e = " + e);
+        }
+        return flag;
+    }
+
+    /**
+     * 批量保存
+     */
+    default boolean _saveAll(List<T> list) {
+
+        if (CollectionUtils.isEmpty(list)) {
+            throw new IllegalArgumentException("collection has not be empty");
+        }
+        boolean flag = false;
+        try {
+            Iterable<T> iterable = this.saveAll(list);
+            ArrayList<T> ts = new ArrayList<>();
+            if (!Objects.isNull(iterable)) {
+                Iterator<T> iterator = iterable.iterator();
+                if (!Objects.isNull(iterator)) {
+                    while (iterator.hasNext()) {
+                        ts.add(iterator.next());
+                    }
+                }
+            }
+            if (!CollectionUtils.isEmpty(ts) && ts.size() == list.size()) {
+                flag = true;
+                logger.debug("BaseRepository#saveOrUpdateBatch success , list = " + list);
+            }
+        } catch (Exception e) {
+            logger.error("BaseRepository#saveOrUpdateBatch has error , e = " + e);
+        }
+        return flag;
     }
 
     /**
      * 批量删除，传参ID集合
      */
-    default boolean deleteBatch(Collection<ID> _ids) {
+    default boolean deleteBatch(Collection<ID> ids) {
 
-        if (CollectionUtils.isEmpty(_ids)) {
-            throw new BaseException("collection _ids has not be empty");
+        if (CollectionUtils.isEmpty(ids)) {
+            throw new IllegalArgumentException("collection has not be empty");
         }
-        _ids.stream().forEach(_id->this.deleteById(_id));
-        return true;
-    }
 
-    /**
-     * 覆盖保存
-     */
-    default <S extends T> S insert(S entity) {
-
-        return save(entity);
-    }
-
-    /**
-     * 批量覆盖保存
-     */
-    default <S extends T> List<S> insertBatch(List<S> entities) {
-
-        return (List<S>) saveAll(entities);
+        boolean delete = false;
+        try {
+            for (ID id : ids) {
+                this.deleteById(id);
+            }
+            delete = true;
+            logger.debug("BaseRepository#deleteBatch success , ids = " + ids);
+        } catch (Exception e) {
+            logger.error("BaseRepository#deleteBatch has error , e = " + e);
+        }
+        return delete;
     }
 }

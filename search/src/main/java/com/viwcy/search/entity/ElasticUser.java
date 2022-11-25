@@ -1,13 +1,19 @@
 package com.viwcy.search.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.viwcy.search.constant.SearchConstant;
+import com.viwcy.search.entity.elastic.BaseID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.elasticsearch.annotations.*;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Mapping;
+import org.springframework.data.elasticsearch.annotations.Setting;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * TODO  Copyright (c) yun lu 2022 Fau (viwcy4611@gmail.com), ltd
@@ -19,21 +25,17 @@ import java.io.Serializable;
 @Document(indexName = SearchConstant.UserIndex.INDEX)
 @Setting(settingPath = "user/user_setting.json")
 @Mapping(mappingPath = "user/user_mapping.json")
-public class ElasticUser extends AbstractBaseElasticBean<ElasticUser> implements Serializable {
+public class ElasticUser extends BaseID<Long> implements Serializable {
 
-    private static final long serialVersionUID = -4037331741638849111L;
+    private static final long serialVersionUID = 2121450050007995861L;
 
-    private Long id;
-    private String userName;
-    /**
-     * phone和email内容较短，可采用wildcard进行模糊检索
-     * 可以使用自定义的char_analyzer进行检索
-     */
-    private String phone;
-    private String email;
-
-    @Override
-    public String _id() {
-        return String.valueOf(this.id);
-    }
+    private String name;
+    private String profile;
+    private String address;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Date createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Date updateTime;
 }

@@ -3,15 +3,14 @@
     "id": {
       "type": "long"
     },
-    "userName": {
+    "name": {
+      "type": "keyword"
+    },
+    "profile": {
       "analyzer": "char_analyzer",
       "type": "text"
     },
-    "phone": {
-      "analyzer": "char_analyzer",
-      "type": "text"
-    },
-    "email": {
+    "address": {
       "analyzer": "char_analyzer",
       "type": "text"
     },
