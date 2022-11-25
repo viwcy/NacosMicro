@@ -18,9 +18,9 @@ public class SearchConstant {
 
     public static final int MINIMUM_SHOULD_MATCH = 1;
 
-    public static final int PAGE_TOTAL_FLAG = 0;
+    public static final int TOTAL_COUNT_SIZE_FLAG = 0;
 
-    public static final long DEFAULT_COUNT = 0;
+    public static final long DEFAULT_ZERO_COUNT = 0;
 
     /**
      * 计算count的字段，_index代表当前索引

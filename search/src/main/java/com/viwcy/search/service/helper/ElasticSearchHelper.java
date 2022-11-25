@@ -64,22 +64,22 @@ public class ElasticSearchHelper {
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         searchSourceBuilder.query(queryBuilder);
-        searchSourceBuilder.size(SearchConstant.PAGE_TOTAL_FLAG);
+        searchSourceBuilder.size(SearchConstant.TOTAL_COUNT_SIZE_FLAG);
         searchSourceBuilder.aggregation(AggregationBuilders.count(SearchConstant.COUNT_NAME).field(SearchConstant.COUNT_FIELD));
         searchRequest.source(searchSourceBuilder);
 
         SearchResponse response = searchResponse(searchRequest);
         if (Objects.isNull(response)) {
-            return SearchConstant.DEFAULT_COUNT;
+            return SearchConstant.DEFAULT_ZERO_COUNT;
         }
         Aggregations aggregations = response.getAggregations();
         if (Objects.isNull(aggregations)) {
-            return SearchConstant.DEFAULT_COUNT;
+            return SearchConstant.DEFAULT_ZERO_COUNT;
         }
         Map<String, Aggregation> aggMap = aggregations.asMap();
         Aggregation agg = aggMap.getOrDefault(SearchConstant.COUNT_NAME, null);
         if (Objects.isNull(agg)) {
-            return SearchConstant.DEFAULT_COUNT;
+            return SearchConstant.DEFAULT_ZERO_COUNT;
         }
         try {
             String strAgg = JSON.toJSONString(agg);
@@ -88,7 +88,7 @@ public class ElasticSearchHelper {
         } catch (Exception e) {
             log.error("conversion aggregation for count(*) has error , e =" + e);
         }
-        return SearchConstant.DEFAULT_COUNT;
+        return SearchConstant.DEFAULT_ZERO_COUNT;
     }
 
     /**

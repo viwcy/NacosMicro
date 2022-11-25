@@ -41,8 +41,8 @@ public class ElasticUserService extends AbstractElasticCrudService<ElasticUser, 
     public final SearchAfterVO<ElasticUser> page(UserSearchParam param) {
 
         log.info("searchAfter page , param = " + param);
-        final int afterPage = param.getSearchPage() + 1;
-        final int pageSize = param.getPageSize();
+        final int afterPage = param.getSearch() + 1;
+        final int pageSize = param.getSize();
         SearchRequest searchRequest = new SearchRequest(index());
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
@@ -53,7 +53,7 @@ public class ElasticUserService extends AbstractElasticCrudService<ElasticUser, 
         for (String field : fields) {
             searchSourceBuilder.sort(field, SortOrder.DESC);
         }
-        Object[] searchAfter = param.getSearchAfter();
+        Object[] searchAfter = param.getSearch_after();
         if (!Objects.isNull(searchAfter) && searchAfter.length > 0) {
             searchSourceBuilder.searchAfter(searchAfter);
         }

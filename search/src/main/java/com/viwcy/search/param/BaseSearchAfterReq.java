@@ -19,13 +19,13 @@ public class BaseSearchAfterReq implements Serializable {
      * 一次查询多少页
      */
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private int searchPage = 1;
+    private int search = 1;
 
     /**
      * 页大小
      */
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private int pageSize = 10;
+    private int size = 10;
 
-    private Object[] searchAfter;
+    private Object[] search_after;
 }
